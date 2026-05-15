@@ -5,5 +5,8 @@
   "_sourceId": "c30b28da-749e-479b-bcb6-cecd8d7be9e3",
   "creator": {
     "version": "3.7.3"
+  },
+  "scripts": {
+    "lint": "eslint assets scripts --ext .ts"
   }
 }
