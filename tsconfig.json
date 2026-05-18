@@ -4,6 +4,17 @@
 
   /* Add your custom configuration here. */
   "compilerOptions": {
-    "strict": false
-  }
+    "strict": false,
+     "moduleResolution": "bundler",
+     "types": [
+      "node"
+    ],
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "skipLibCheck": true,
+  },
+
+    "include": [
+    "./",
+    "../../assets/scripts"
+  ]
 }

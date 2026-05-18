@@ -2,9 +2,7 @@
   "name": "validation-tools",
   "version": "1.0.0",
   "scripts": {
-    "type-check": "tsc --noEmit",
-    "validate": "ts-node src/index.ts",
-    "lint": "eslint ../../assets/scripts --ext .ts"
+    "validate": "ts-node src/index.ts"
   },
   "devDependencies": {
     "@types/node": "^22.19.19",
