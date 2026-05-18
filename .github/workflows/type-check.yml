@@ -21,16 +21,5 @@ jobs:
       - name: Install validation dependencies
         run: npm install
 
-      - name: Create Cocos tsconfig stub
-        run: |
-          mkdir -p temp
-          echo '{
-            "compilerOptions": {
-              "target": "ES6",
-              "module": "commonjs",
-              "moduleResolution": "node"
-            }
-          }' > temp/tsconfig.cocos.json
-
       - name: Run TypeScript type check
         run: npm run type-check
