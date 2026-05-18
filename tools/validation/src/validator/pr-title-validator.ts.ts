@@ -1,13 +1,20 @@
-import { PR_TITLE_REGEX } from "../config/rule";
-import { ValidationResult, Validator } from "../core/types";
+import { Validator } from "../core/types";
+
+const PR_REGEX =
+/^\[(feature|fix|refactor|hotfix|docs)\]\s.+$/;
 
 export const prTitleValidator: Validator = {
   name: 'pr-title-validator',
 
-  validate(context): ValidationResult[] {
-    const prTitle = context.prTitle;
+  validate() {
+    const prTitle =
+      (process.env.PR_TITLE || '').trim();
 
-    if (!PR_TITLE_REGEX.test(prTitle)) {
+    if (!prTitle) {
+      return [];
+    }
+
+    if (!PR_REGEX.test(prTitle)) {
       return [
         {
           type: 'error',

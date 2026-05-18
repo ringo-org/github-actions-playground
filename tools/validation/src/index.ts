@@ -1,25 +1,20 @@
-import { branchNameValidator } from "./validator/branch-name-validator";
-import { prTitleValidator } from "./validator/pr-title-validator.ts";
+import { Validator }
+from './core/types';
+import { branchNameValidator } from './validator/branch-name-validator';
+import { prTitleValidator } from './validator/pr-title-validator.ts';
+import { textureValidator } from './validator/texture-validator';
 
-
-const branchName =
-  (process.env.BRANCH_NAME || '').trim();
-
-const prTitle =
-  (process.env.PR_TITLE || '').trim();
-
-const validators = [
+const validators: Validator[] = [
   branchNameValidator,
   prTitleValidator,
+  textureValidator,
 ];
 
 let hasError = false;
 
 for (const validator of validators) {
-  const results = validator.validate({
-    branchName,
-    prTitle,
-  });
+  const results =
+    validator.validate();
 
   for (const result of results) {
     console.error(`

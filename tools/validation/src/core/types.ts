@@ -1,8 +1,3 @@
-export interface ValidationContext {
-  branchName: string;
-  prTitle: string;
-}
-
 export interface ValidationResult {
   type: 'error' | 'warning';
   message: string;
@@ -11,7 +6,5 @@ export interface ValidationResult {
 export interface Validator {
   name: string;
 
-  validate(
-    context: ValidationContext
-  ): ValidationResult[];
+  validate(): ValidationResult[];
 }

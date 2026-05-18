@@ -1,11 +1,14 @@
-import { ValidationResult, Validator } from '../core/types';
-import { BRANCH_REGEX } from '../config/rule';
+import { Validator } from "../core/types";
+
+const BRANCH_REGEX =
+/^(feature|fix|refactor|chore|hotfix|test|docs)\/[a-z0-9-_]+$/;
 
 export const branchNameValidator: Validator = {
   name: 'branch-name-validator',
 
-  validate(context): ValidationResult[] {
-    const branchName = context.branchName;
+  validate() {
+    const branchName =
+      (process.env.BRANCH_NAME || '').trim();
 
     if (!BRANCH_REGEX.test(branchName)) {
       return [
