@@ -5,7 +5,7 @@ const { ccclass } = _decorator;
 export class HelloWorld extends Component {
     start() {
         // Initialization code here
-        
+        console.log('Hello, World!');
     }
 }
 
