@@ -3,16 +3,17 @@
   "extends": "./temp/tsconfig.cocos.json",
   /* Add your custom configuration here. */
   "compilerOptions": {
+    "target": "ES2020",
+    "module": "CommonJS",
+    "moduleResolution": "node",
     "strict": true,
-    "ignoreDeprecations": "5.0",
+    "esModuleInterop": true,
+    "skipLibCheck": true,
     "types": [
       "node"
-    ],
-    "skipLibCheck": true,
-    "allowSyntheticDefaultImports": true 
+    ]
   },
   "include": [
-    "./",
-    "../../assets/scripts"
+    "tools/**/*.ts"
   ]
 }
