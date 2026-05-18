@@ -15,9 +15,9 @@ jobs:
           node-version: 20
 
       - run: npm install
-        working-directory: validation
+        working-directory: tools/validation
 
       - run: npm run validate
-        working-directory: validation
+        working-directory: tools/validation
         env:
           BRANCH_NAME: ${{ github.head_ref }}
