@@ -9,7 +9,7 @@
   "scripts": {
     "type-check": "tsc --noEmit",
     "lint": "eslint assets/scripts --ext .ts",
-    "validate": "ts-node tools/validation/src/index.ts"
+    "validate": "ts-node -P tsconfig.tools.json tools/validation/src/index.t"
   },
   "devDependencies": {
     "@types/node": "^22.19.19",
