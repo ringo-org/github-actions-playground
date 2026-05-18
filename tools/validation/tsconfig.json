@@ -2,13 +2,17 @@
   "compilerOptions": {
     "target": "ES2020",
     "module": "CommonJS",
-    "rootDir": ".",
+    "rootDir": "../../",
     "strict": true,
     "esModuleInterop": true,
-    "types": ["node"]
+    "types": [
+      "node"
+    ],
+    "typeRoots": ["./node_modules/@types", "./types"],
+    "skipLibCheck": true,
   },
   "include": [
-    "src",
+    "./",
     "../../assets/scripts"
   ]
 }
