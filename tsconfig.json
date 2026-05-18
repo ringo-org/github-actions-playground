@@ -5,7 +5,7 @@
   /* Add your custom configuration here. */
   "compilerOptions": {
     "strict": false,
-      "ignoreDeprecations": "5.0",
+      "ignoreDeprecations": "6.0",
      "types": [
       "node"
     ],
