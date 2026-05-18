@@ -16,8 +16,18 @@ jobs:
 
       - run: npm install
 
+      - name: Create Cocos tsconfig stub
+        run: |
+          mkdir -p temp
+          echo '{
+            "compilerOptions": {
+              "target": "ES6",
+              "module": "commonjs",
+              "moduleResolution": "node"
+            }
+          }' > temp/tsconfig.cocos.json
+
       - run: npm run validate
-      
         env:
           BRANCH_NAME: ${{ github.head_ref }}
           PR_TITLE: ${{ github.event.pull_request.title }}
