@@ -22,6 +22,8 @@ export default [
                     format: ['camelCase'],
                 },
             ],
+             'no-console': 'error',
+             '@typescript-eslint/no-unused-vars': 'error',
         },
     },
 ];

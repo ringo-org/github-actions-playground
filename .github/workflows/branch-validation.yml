@@ -1,0 +1,24 @@
+name: Validation
+
+on:
+  pull_request:
+
+jobs:
+  validate:
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      - run: npm install
+        working-directory: tools/validation
+
+      - run: npm run validate
+        working-directory: tools/validation
+        env:
+          BRANCH_NAME: ${{ github.head_ref }}
+          PR_TITLE: ${{ github.event.pull_request.title }}

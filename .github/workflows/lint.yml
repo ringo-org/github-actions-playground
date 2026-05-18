@@ -1,8 +1,9 @@
-name: Naming Convention Check
+name: lint code
 
 on:
   pull_request:
   push:
+    branches: main
 
 jobs:
   lint:
