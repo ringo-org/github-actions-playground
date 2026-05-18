@@ -9,8 +9,7 @@
   },
   "scripts": {
     "type-check": "tsc --noEmit",
-    "lint": "eslint assets/scripts --ext .ts",
-    "validate": "ts-node tools/validation/src/index.ts"
+    "lint": "eslint assets/scripts --ext .ts"
   },
   "devDependencies": {
     "@types/node": "^22.19.19",
