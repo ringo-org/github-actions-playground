@@ -28,6 +28,12 @@ export const metaValidator: Validator = {
             ) {
                 continue;
             }
+            // only validate assets
+            if (
+                !file.startsWith('assets/')
+            ) {
+                continue;
+            }
 
             // ignore meta files
             if (
