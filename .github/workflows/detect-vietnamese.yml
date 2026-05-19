@@ -33,6 +33,17 @@ jobs:
           git diff --name-only origin/main...HEAD >> $GITHUB_OUTPUT
           echo "EOF" >> $GITHUB_OUTPUT
 
+      - name: Create Cocos tsconfig stub
+        run: |
+          mkdir -p temp
+          echo '{
+            "compilerOptions": {
+              "target": "ES6",
+              "module": "commonjs",
+              "moduleResolution": "node"
+            }
+          }' > temp/tsconfig.cocos.json
+
       - name: Run validation
         env:
           CHANGED_FILES: ${{ steps.changed-files.outputs.files }}
