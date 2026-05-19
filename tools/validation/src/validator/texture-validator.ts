@@ -1,10 +1,12 @@
 import * as fs from 'fs';
 import * as path from 'path';
 
-import { imageSize }
-  from 'image-size';
+import {
+  imageSize,
+} from 'image-size';
 
 import {
+  ValidationContext,
   ValidationResult,
   Validator,
 } from '../core/types';
@@ -25,44 +27,30 @@ const IGNORE_EXTENSIONS = [
 
 const MAX_TEXTURE_SIZE = 2048;
 
-function isPowerOfTwo(value: number) {
-  return (value & (value - 1)) === 0;
-}
-
-function walk(dir: string): string[] {
-  let results: string[] = [];
-
-  const entries =
-    fs.readdirSync(dir);
-
-  for (const entry of entries) {
-    const fullPath =
-      path.join(dir, entry);
-
-    const stat =
-      fs.statSync(fullPath);
-
-    if (stat.isDirectory()) {
-      results =
-        results.concat(walk(fullPath));
-
-      continue;
-    }
-
-    results.push(fullPath);
-  }
-
-  return results;
+function isPowerOfTwo(
+  value: number,
+) {
+  return (
+    value & (value - 1)
+  ) === 0;
 }
 
 export const textureValidator: Validator = {
   name: 'texture-validator',
 
-  validate(): ValidationResult[] {
-    const results: ValidationResult[] = [];
+  validate({
+    changedFiles,
+  }: ValidationContext): ValidationResult[] {
+
+    const results:
+      ValidationResult[] = [];
 
     const files =
-      walk('assets/textures');
+      changedFiles.filter((file) =>
+        file.startsWith(
+          'assets/textures',
+        ),
+      );
 
     for (const file of files) {
 
@@ -103,7 +91,10 @@ export const textureValidator: Validator = {
       }
 
       const pureFileName =
-        path.basename(file, ext);
+        path.basename(
+          file,
+          ext,
+        );
 
       // snake_case naming
       if (
