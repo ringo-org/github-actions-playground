@@ -38,6 +38,17 @@ jobs:
           echo "===== CHANGED FILES ====="
           echo "${{ steps.changed-files.outputs.files }}"
           echo "========================="
+          
+      - name: Create Cocos tsconfig stub
+        run: |
+          mkdir -p temp
+          echo '{
+            "compilerOptions": {
+              "target": "ES6",
+              "module": "commonjs",
+              "moduleResolution": "node"
+            }
+          }' > temp/tsconfig.cocos.json
 
       - name: Run validation
         env:
