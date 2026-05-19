@@ -13,7 +13,9 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: 20
-
+      - name: Debug changed files
+        run: |
+          echo "${{ steps.changed-files.outputs.files }}"
       - run: npm install
 
       - name: Create Cocos tsconfig stub
