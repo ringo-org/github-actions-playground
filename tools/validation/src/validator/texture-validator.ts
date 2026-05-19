@@ -1,15 +1,26 @@
-import fs from 'fs';
-import path from 'path';
+import * as fs from 'fs';
+import * as path from 'path';
 
 import { imageSize }
   from 'image-size';
-import { ValidationResult, Validator } from '../core/types';
-import { SNAKE_CASE_REGEX } from '../config/rule';
 
-const IMAGE_EXTENSIONS = [
+import {
+  ValidationResult,
+  Validator,
+} from '../core/types';
+
+import {
+  SNAKE_CASE_REGEX,
+} from '../config/rule';
+
+const ALLOWED_IMAGE_EXTENSIONS = [
   '.png',
   '.jpg',
   '.jpeg',
+];
+
+const IGNORE_EXTENSIONS = [
+  '.meta',
 ];
 
 const MAX_TEXTURE_SIZE = 2048;
@@ -50,20 +61,55 @@ export const textureValidator: Validator = {
   validate(): ValidationResult[] {
     const results: ValidationResult[] = [];
 
-    const files = walk('assets/textures');
+    const files =
+      walk('assets/textures');
 
     for (const file of files) {
-      const ext =
-        path.extname(file).toLowerCase();
 
-      if (!IMAGE_EXTENSIONS.includes(ext)) {
+      const fileName =
+        path.basename(file);
+
+      // ignore hidden files
+      if (
+        fileName.startsWith('.')
+      ) {
         continue;
       }
 
-      const fileName =
+      const ext =
+        path.extname(file)
+          .toLowerCase();
+
+      // ignore .meta
+      if (
+        IGNORE_EXTENSIONS
+          .includes(ext)
+      ) {
+        continue;
+      }
+
+      // invalid extension
+      if (
+        !ALLOWED_IMAGE_EXTENSIONS
+          .includes(ext)
+      ) {
+        results.push({
+          type: 'error',
+          message:
+            `[INVALID_TEXTURE_EXTENSION] ${file}`,
+        });
+
+        continue;
+      }
+
+      const pureFileName =
         path.basename(file, ext);
 
-      if (!SNAKE_CASE_REGEX.test(fileName)) {
+      // snake_case naming
+      if (
+        !SNAKE_CASE_REGEX
+          .test(pureFileName)
+      ) {
         results.push({
           type: 'error',
           message:
@@ -83,6 +129,7 @@ export const textureValidator: Validator = {
       const height =
         size.height || 0;
 
+      // power of two
       if (
         !isPowerOfTwo(width) ||
         !isPowerOfTwo(height)
@@ -94,6 +141,7 @@ export const textureValidator: Validator = {
         });
       }
 
+      // max resolution
       if (
         width > MAX_TEXTURE_SIZE ||
         height > MAX_TEXTURE_SIZE

@@ -1,3 +1,7 @@
+export interface ValidationContext {
+  changedFiles: string[];
+}
+
 export interface ValidationResult {
   type: 'error' | 'warning';
   message: string;
@@ -6,5 +10,7 @@ export interface ValidationResult {
 export interface Validator {
   name: string;
 
-  validate(): ValidationResult[];
+  validate(
+    context: ValidationContext
+  ): ValidationResult[];
 }
