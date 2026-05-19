@@ -1,7 +1,8 @@
 import { _decorator, Component } from 'cc';
 const { ccclass } = _decorator;
+const Message = "Hello World"; // const should be in uppercase
 @ccclass('HelloWorld')
-export class HelloWorld extends Component {
+export class helloWorld extends Component { // class name should be in PascalCase
 
 }
 
