@@ -52,6 +52,8 @@ export const vietnameseValidator:
                 continue;
             }
 
+            console.log(`Checking file for Vietnamese: ${file}`);
+
             const content =
                 fs.readFileSync(
                     file,
@@ -60,7 +62,7 @@ export const vietnameseValidator:
 
             // ignore tiny text
             if (
-                content.length < 5
+                content.length < 20
             ) {
                 continue;
             }
