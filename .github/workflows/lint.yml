@@ -3,7 +3,8 @@ name: lint code
 on:
   pull_request:
   push:
-    branches: main
+    branches: 
+      - main
 
 jobs:
   lint:
@@ -20,6 +21,22 @@ jobs:
 
       - name: Install dependencies
         run: npm install
+ 
+      - name: Fetch main branch
+        run: git fetch origin main
+
+      - name: Get changed files
+        id: changed-files
+        run: |
+          echo "files<<EOF" >> $GITHUB_OUTPUT
+          git diff --name-only origin/main...HEAD >> $GITHUB_OUTPUT
+          echo "EOF" >> $GITHUB_OUTPUT
+
+      - name: Debug changed files
+        run: |
+          echo "===== CHANGED FILES ====="
+          echo "${{ steps.changed-files.outputs.files }}"
+          echo "========================="
 
       - name: Run ESLint
         run: npm run lint
