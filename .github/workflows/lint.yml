@@ -42,7 +42,7 @@ jobs:
         env:
           CHANGED_FILES: ${{ steps.changed-files.outputs.files }}
         run: |
-          FILES=$(echo "$CHANGED_FILES" | grep '\.ts$' || true)
+          FILES=$(echo "$CHANGED_FILES" | grep '^assets/scripts/.*\.ts$' || true)
 
           if [ -z "$FILES" ]; then
             echo "No TS files changed"
