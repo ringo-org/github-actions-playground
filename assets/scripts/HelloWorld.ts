@@ -1,12 +1,12 @@
 import { _decorator, Component } from 'cc';
 const { ccclass } = _decorator;
+const Message = "Hello World"; // const should be in uppercase
 @ccclass('HelloWorld')
-export class HelloWorld extends Component {
+export class helloWorld extends Component { // class name should be in PascalCase
 
-    ExampleFunction() { //funciton name should be in camelCase
-        var Message = "Hello World"; //var should be in camelCase
-        console.log(Message); // console log should be remove
-        
+    exampleFunction() { //funciton name should be in camelCase
+        var unusedVariable = Message; // unused variable should be removed
     }
+    
 }
 
