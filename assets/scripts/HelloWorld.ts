@@ -6,6 +6,9 @@ export class HelloWorld extends Component {
 
     start() {
         console.log('Tiếng việt có dấu! Xin chào thế giới!');
+        console.log('Tiếng việt có dấu! Xin chào thế giới!');
+        console.log('Tiếng việt có dấu! Xin chào thế giới!');
+        console.log('Tiếng việt có dấu! Xin chào thế giới!');
     }
 
 }

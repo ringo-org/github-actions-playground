@@ -52,7 +52,6 @@ export const vietnameseValidator:
                 continue;
             }
 
-            console.log(`Checking file for Vietnamese: ${file}`);
 
             const content =
                 fs.readFileSync(
@@ -69,7 +68,7 @@ export const vietnameseValidator:
 
             const language =
                 franc(content);
-
+console.log(`[vietnamese-validator] ${file}: detected language = ${language}`);
             if (
                 language === 'vie'
             ) {
