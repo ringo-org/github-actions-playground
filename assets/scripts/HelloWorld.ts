@@ -11,8 +11,6 @@ export class HelloWorld extends Component {
         console.log('tieng viet khong dau');
         console.log('Xin Chào');
         console.log('Anh Tai da noi vay thi ok di');
-
-        console.log('This is a new line');
     }
 
 }
