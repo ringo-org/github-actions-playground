@@ -2,7 +2,7 @@ name: lint code
 
 on:
   pull_request:
-    branches: 
+    branches:
       - main
 
 jobs:
