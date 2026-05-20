@@ -82,6 +82,9 @@ export const vietnameseValidator:
                 const language =
                     franc(trimmed);
 
+                    console.log(
+                        `[${file}] Detected language: ${language} for line: ${trimmed}`,
+                    );
                 if (
                     language === 'vie'
                 ) {
