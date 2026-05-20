@@ -12,7 +12,7 @@ export class HelloWorld extends Component {
         console.log('Xin Chào');
         console.log('Anh Tai da noi vay thi ok di');
 
-
+        console.log('This is new line');
     }
 
 }
