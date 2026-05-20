@@ -1,14 +1,16 @@
 import * as fs from 'fs';
 
-import {
-    franc,
-} from 'franc-min';
 
 import {
     ValidationContext,
     ValidationResult,
     Validator,
 } from '../core/types';
+const LanguageDetect =
+    require('languagedetect');
+
+const languageDetector =
+    new LanguageDetect();
 
 const TEXT_EXTENSIONS = [
     '.ts',
@@ -17,6 +19,8 @@ const TEXT_EXTENSIONS = [
     '.txt',
     '.md',
 ];
+
+const MIN_TEXT_LENGTH = 5;
 
 export const vietnameseValidator:
     Validator = {
@@ -64,34 +68,49 @@ export const vietnameseValidator:
                     'utf8',
                 );
 
-            const lines =
-                content.split('\n');
+            // extract quoted strings
+            const matches =
+                content.match(
+                    /(['"`])((?:\\.|(?!\1).)*)\1/g,
+                ) || [];
 
-            for (const line of lines) {
+            for (const raw of matches) {
 
-                const trimmed =
-                    line.trim();
+                const text =
+                    raw
+                        .slice(1, -1)
+                        .trim();
 
-                // ignore short lines
+                // ignore short text
                 if (
-                    trimmed.length < 10
+                    text.length <
+                    MIN_TEXT_LENGTH
                 ) {
                     continue;
                 }
 
+                const detected =
+                    languageDetector.detect(
+                        text,
+                        1,
+                    );
+
                 const language =
-                    franc(trimmed);
+                    detected?.[0]?.[0];
+
+                console.log(
+                    `[${file}] ${language}: ${text}`,
+                );
 
                 if (
-                    language === 'vie'
+                    language ===
+                    'vietnamese'
                 ) {
                     results.push({
                         type: 'error',
                         message:
-                            `[VIETNAMESE_DETECTED] ${file}\n${trimmed}`,
+                            `[VIETNAMESE_DETECTED] ${file}\n${text}`,
                     });
-
-                    break;
                 }
             }
         }
