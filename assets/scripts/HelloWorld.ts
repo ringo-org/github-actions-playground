@@ -5,10 +5,7 @@ const { ccclass } = _decorator;
 export class HelloWorld extends Component {
 
     start() {
-        console.log('Tiếng việt có dấu! Xin chào thế giới!');
-        console.log('Tiếng việt có dấu! Xin chào thế giới!');
-        console.log('Tiếng việt có dấu! Xin chào thế giới!');
-        console.log('Tiếng việt có dấu! Xin chào thế giới!');
+        console.log('tieng han quoc khong bo dau');
     }
 
 }
