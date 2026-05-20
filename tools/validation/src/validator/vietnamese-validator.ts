@@ -18,6 +18,11 @@ const TEXT_EXTENSIONS = [
     '.md',
 ];
 
+const SPLIT_REGEX =
+    /[\s()[\]{};,+\-*/=<>!?:'"`]+/;
+
+const MIN_TEXT_LENGTH = 5;
+
 export const vietnameseValidator:
     Validator = {
 
@@ -69,32 +74,52 @@ export const vietnameseValidator:
 
             for (const line of lines) {
 
-                const trimmed =
+                const trimmedLine =
                     line.trim();
 
-                // ignore short lines
                 if (
-                    trimmed.length < 10
+                    trimmedLine.length <
+                    MIN_TEXT_LENGTH
                 ) {
                     continue;
                 }
 
-                const language =
-                    franc(trimmed);
+                const chunks =
+                    trimmedLine.split(
+                        SPLIT_REGEX,
+                    );
+
+                for (const chunk of chunks) {
+
+                    const text =
+                        chunk.trim();
+
+                    // ignore short chunk
+                    if (
+                        text.length <
+                        MIN_TEXT_LENGTH
+                    ) {
+                        continue;
+                    }
+
+                    const language =
+                        franc(text);
 
                     console.log(
-                        `[${file}] Detected language: ${language} for line: ${trimmed}`,
+                        `[${file}] Detected language: ${language} for text: ${text}`,
                     );
-                if (
-                    language === 'vie'
-                ) {
-                    results.push({
-                        type: 'error',
-                        message:
-                            `[VIETNAMESE_DETECTED] ${file}\n${trimmed}`,
-                    });
 
-                    break;
+                    if (
+                        language === 'vie'
+                    ) {
+                        results.push({
+                            type: 'error',
+                            message:
+                                `[VIETNAMESE_DETECTED] ${file}\n${text}`,
+                        });
+
+                        break;
+                    }
                 }
             }
         }
