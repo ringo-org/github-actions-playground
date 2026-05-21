@@ -53,7 +53,11 @@ export const textureValidator: Validator = {
       );
 
     for (const file of files) {
-
+      if (
+        !fs.existsSync(file)
+      ) {
+        continue;
+      }
       const fileName =
         path.basename(file);
 
