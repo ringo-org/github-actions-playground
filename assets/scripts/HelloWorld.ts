@@ -5,5 +5,9 @@ const { ccclass } = _decorator;
 @ccclass('HelloWorld')
 export class HelloWorld extends Component {
 
+    start() {
+        const text = 'Xin chào, tôi là một lập trình viên.';
+        console.log(text);
+    }
 }
 
