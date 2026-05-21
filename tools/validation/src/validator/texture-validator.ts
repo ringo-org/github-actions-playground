@@ -108,6 +108,12 @@ export const textureValidator: Validator = {
         });
       }
 
+      if (
+        !fs.existsSync(file)
+      ) {
+        continue;
+      }
+
       const buffer =
         fs.readFileSync(file);
 
