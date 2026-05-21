@@ -5,9 +5,9 @@ const { ccclass } = _decorator;
 export class HelloWorld extends Component {
 
     start() {
-        var text = 'Xin chào thế giới';
-        text = 'Hello World';
-        text = 'day la tieng viet khong dau';
+        // var text = 'Xin chào thế giới';
+        // text = 'Hello World';
+        // text = 'day la tieng viet khong dau';
     }
 }
 
