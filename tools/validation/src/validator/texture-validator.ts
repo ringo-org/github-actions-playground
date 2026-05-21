@@ -53,7 +53,11 @@ export const textureValidator: Validator = {
       );
 
     for (const file of files) {
-
+      if (
+        !fs.existsSync(file)
+      ) {
+        continue;
+      }
       const fileName =
         path.basename(file);
 
@@ -106,12 +110,6 @@ export const textureValidator: Validator = {
           message:
             `[INVALID_TEXTURE_NAME] ${file}`,
         });
-      }
-
-      if (
-        !fs.existsSync(file)
-      ) {
-        continue;
       }
 
       const buffer =
