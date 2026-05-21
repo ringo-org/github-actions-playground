@@ -283,9 +283,7 @@ export const vietnameseValidator:
                 );
 
                 if (
-                    result.isVietnamese &&
-                    result.confidence >
-                    0.7
+                    result.isVietnamese 
                 ) {
                     results.push({
                         type: 'error',
