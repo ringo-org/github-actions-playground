@@ -273,17 +273,8 @@ export const vietnameseValidator:
                     detectVietnamese(
                         text,
                     );
-
-                console.log(
-                    `[${file}] `
-                    + `VI:${result.scores.vietnamese} `
-                    + `EN:${result.scores.english} `
-                    + `CONF:${result.confidence} `
-                    + `TEXT:${text}`,
-                );
-
                 if (
-                    result.isVietnamese 
+                    result.isVietnamese && result.scores.vietnamese > 0.001
                 ) {
                     results.push({
                         type: 'error',
