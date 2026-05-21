@@ -6,8 +6,9 @@ const { ccclass } = _decorator;
 export class HelloWorld extends Component {
 
     start() {
-        const text = 'Xin chào, tôi là một lập trình viên.';
-        console.log(text);
+        var text = 'Xin chào thế giới';
+         text = 'Hello World';
+         text = 'day la tieng viet khong dau';
     }
 }
 
