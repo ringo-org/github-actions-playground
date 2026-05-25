@@ -14,10 +14,17 @@ export class HelloWorld extends Component {
 
         console.log('Bạn thân ơi vui quá là vui');
         console.log('bao uoc ma minh van di tim');
-        
+
+
         console.log('hu tieu mi, banh mi, com tam, pho');
 
+
         console.log('should only linting this line');
+        this.dummyFunction();
     }
-}
+
+    dummyFunction() {
+        console.log('This is a dummy function');
+    }
+ } 
 
