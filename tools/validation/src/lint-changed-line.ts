@@ -45,7 +45,11 @@ async function main() {
         continue;
       }
 
-      if (line.startsWith('+++') || line.startsWith('---')) {
+      // skip file headers
+      if (
+        line.startsWith('+++') ||
+        line.startsWith('---')
+      ) {
         continue;
       }
 
@@ -61,12 +65,12 @@ async function main() {
         continue;
       }
 
-      // special marker
+      // "\ No newline at end of file"
       if (line.startsWith('\\')) {
         continue;
       }
 
-      // context
+      // unchanged context line
       currentNewLine++;
     }
 
