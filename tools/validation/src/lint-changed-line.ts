@@ -28,53 +28,24 @@ async function main() {
       { encoding: 'utf8' }
     );
 
-    const changedLines = new Set();
+    const changedLines = [];
 
-    const diffLines = diff.split('\n');
+    const regex = /^@@ .*?\+(\d+)(?:,(\d+))? @@/gm;
 
-    let currentNewLine = 0;
+    let match;
 
-    for (const line of diffLines) {
+    while ((match = regex.exec(diff)) !== null) {
+      const start = Number(match[1]);
+      const count = match[2] !== undefined ? Number(match[2]) : 1;
 
-      const hunkMatch = line.match(
-        /^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/
-      );
-
-      if (hunkMatch) {
-        currentNewLine = Number(hunkMatch[1]);
-        continue;
+      for (let i = 0; i < count; i++) {
+        changedLines.push(start + i);
       }
-
-      // skip file headers
-      if (
-        line.startsWith('+++') ||
-        line.startsWith('---')
-      ) {
-        continue;
-      }
-
-      // added line
-      if (line.startsWith('+')) {
-        changedLines.add(currentNewLine);
-        currentNewLine++;
-        continue;
-      }
-
-      // removed line
-      if (line.startsWith('-')) {
-        continue;
-      }
-
-      // "\ No newline at end of file"
-      if (line.startsWith('\\')) {
-        continue;
-      }
-
-      // unchanged context line
-      currentNewLine++;
     }
 
-    console.log([...changedLines]);
+    if (changedLines.length === 0) {
+      continue;
+    }
 
     const source = fs.readFileSync(file, 'utf8');
     const lines = source.split('\n');
