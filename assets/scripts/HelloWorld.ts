@@ -16,6 +16,8 @@ export class HelloWorld extends Component {
         console.log('bao uoc ma minh van di tim');
         
         console.log('hu tieu mi, banh mi, com tam, pho');
+
+        console.log('should only linting this line');
     }
 }
 
