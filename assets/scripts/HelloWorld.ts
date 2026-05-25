@@ -26,5 +26,5 @@ export class HelloWorld extends Component {
     dummyFunction() {
         console.log('This is a dummy function');
     }
-} 
+}
 
