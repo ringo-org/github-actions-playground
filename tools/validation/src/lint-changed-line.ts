@@ -29,22 +29,26 @@ async function main() {
     );
 
     const changedLines = [];
+    let currentLine = 0;
 
-    const regex = /^@@ .*?\+(\d+)(?:,(\d+))? @@/gm;
-
-    let match;
-
-    while ((match = regex.exec(diff)) !== null) {
-      const start = Number(match[1]);
-      const count = match[2] !== undefined ? Number(match[2]) : 1;
-
-      for (let i = 0; i < count; i++) {
-        changedLines.push(start + i);
+    for (const line of diff.split('\n')) {
+      // cập nhật vị trí dòng từ hunk header
+      if (line.startsWith('@@')) {
+        const match = /\+(\d+)/.exec(line);
+        currentLine = Number(match[1]);
+        continue;
       }
-    }
 
-    if (changedLines.length === 0) {
-      continue;
+      if (line.startsWith('-')) {
+        // dòng bị xóa, không tăng currentLine
+        continue;
+      }
+
+      if (line.startsWith('+')) {
+        changedLines.push(currentLine);  // ← chỉ push dòng có dấu +
+      }
+
+      currentLine++;  // tăng cho cả dòng + và context
     }
 
     const source = fs.readFileSync(file, 'utf8');
