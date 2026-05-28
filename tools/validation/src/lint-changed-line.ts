@@ -26,6 +26,11 @@ async function main() {
       { encoding: 'utf8' }
     );
 
+    console.log('=== RAW DIFF ===');
+    console.log(diff);
+    console.log('=== CHANGED LINES ===');
+    console.log(parseChangedLines(diff));
+
     // Parse chính xác từng dòng có dấu + thay vì dùng hunk header
     // Fix bug: hunk header +14,15 bao gồm cả context lines không thay đổi
     const changedLines = parseChangedLines(diff);
