@@ -30,20 +30,51 @@ async function main() {
 
     const changedLines = new Set();
 
-    const regex =
-      /^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@/gm;
+    const diffLines = diff.split('\n');
 
-    let match;
+    let currentLine = 0;
 
-    while ((match = regex.exec(diff)) !== null) {
-      const start = Number(match[1]);
-      const count = Number(match[2] || 1);
+    for (const line of diffLines) {
 
-      for (let i = 0; i < count; i++) {
-        changedLines.add(start + i);
+      const hunkMatch = line.match(
+        /^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/
+      );
+
+      if (hunkMatch) {
+        currentLine = Number(hunkMatch[1]);
+        continue;
       }
-    }
 
+      // exact added line
+      if (
+        line.startsWith('+') &&
+        !line.startsWith('+++')
+      ) {
+        changedLines.add(currentLine);
+        currentLine++;
+        continue;
+      }
+
+      // removed line
+      if (
+        line.startsWith('-') &&
+        !line.startsWith('---')
+      ) {
+        continue;
+      }
+
+      // skip metadata
+      if (
+        line.startsWith('\\') ||
+        line.startsWith('diff ') ||
+        line.startsWith('index ')
+      ) {
+        continue;
+      }
+
+      // context line
+      currentLine++;
+    }
     console.log([...changedLines]);
 
     const source = fs.readFileSync(file, 'utf8');
