@@ -8,7 +8,7 @@ async function main() {
   )
     .split('\n')
     .filter(Boolean)
-    .filter((f: string) => /^assets\/scripts\/.*\.ts$/.test(f));
+    .filter((f) => /^assets\/scripts\/.*\.ts$/.test(f));
 
   if (changedFiles.length === 0) {
     console.log('No TS files changed');
@@ -73,8 +73,8 @@ async function main() {
  * -console.log('removed');   ← dòng xóa, không tăng currentLine
  * +var result = a + b;       ← dòng thêm, push currentLine rồi tăng
  */
-function parseChangedLines(diff: string): number[] {
-  const changedLines: number[] = [];
+function parseChangedLines(diff) {
+  const changedLines = [];
   let currentLine = 0;
 
   for (const line of diff.split('\n')) {
