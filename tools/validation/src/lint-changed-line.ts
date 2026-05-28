@@ -45,33 +45,43 @@ async function main() {
         continue;
       }
 
-      // skip file headers
+      // skip metadata
       if (
-        line.startsWith('+++') ||
-        line.startsWith('---')
+        line.startsWith('diff ') ||
+        line.startsWith('index ') ||
+        line.startsWith('---') ||
+        line.startsWith('+++')
       ) {
         continue;
       }
 
       // added line
-      if (line.startsWith('+')) {
+      if (
+        line.startsWith('+') &&
+        !line.startsWith('+++')
+      ) {
         changedLines.add(currentNewLine);
         currentNewLine++;
         continue;
       }
 
       // removed line
-      if (line.startsWith('-')) {
+      if (
+        line.startsWith('-') &&
+        !line.startsWith('---')
+      ) {
         continue;
       }
 
-      // "\ No newline at end of file"
+      // special marker
       if (line.startsWith('\\')) {
         continue;
       }
 
-      // unchanged context line
-      currentNewLine++;
+      // ONLY increment for real context line
+      if (line.startsWith(' ')) {
+        currentNewLine++;
+      }
     }
 
     console.log([...changedLines]);
