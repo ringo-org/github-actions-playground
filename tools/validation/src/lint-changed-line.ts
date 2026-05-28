@@ -36,6 +36,7 @@ async function main() {
 
     for (const line of diffLines) {
 
+      // hunk header
       const hunkMatch = line.match(
         /^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/
       );
@@ -45,7 +46,7 @@ async function main() {
         continue;
       }
 
-      // exact added line
+      // exact added line only
       if (
         line.startsWith('+') &&
         !line.startsWith('+++')
@@ -65,9 +66,9 @@ async function main() {
 
       // skip metadata
       if (
-        line.startsWith('\\') ||
         line.startsWith('diff ') ||
-        line.startsWith('index ')
+        line.startsWith('index ') ||
+        line.startsWith('\\')
       ) {
         continue;
       }
@@ -75,6 +76,7 @@ async function main() {
       // context line
       currentLine++;
     }
+
     console.log([...changedLines]);
 
     const source = fs.readFileSync(file, 'utf8');
