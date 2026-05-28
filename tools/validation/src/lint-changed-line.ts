@@ -1,5 +1,4 @@
 const { ESLint } = require('eslint');
-const fs = require('fs');
 const { execSync } = require('child_process');
 
 async function main() {
@@ -9,7 +8,7 @@ async function main() {
   )
     .split('\n')
     .filter(Boolean)
-    .filter(f => /^assets\/scripts\/.*\.ts$/.test(f));
+    .filter((f: string) => /^assets\/scripts\/.*\.ts$/.test(f));
 
   if (changedFiles.length === 0) {
     console.log('No TS files changed');
@@ -17,7 +16,6 @@ async function main() {
   }
 
   const eslint = new ESLint();
-
   let hasError = false;
 
   for (const file of changedFiles) {
@@ -28,55 +26,33 @@ async function main() {
       { encoding: 'utf8' }
     );
 
-    const changedLines = [];
-    let currentLine = 0;
+    // Parse chính xác từng dòng có dấu + thay vì dùng hunk header
+    // Fix bug: hunk header +14,15 bao gồm cả context lines không thay đổi
+    const changedLines = parseChangedLines(diff);
 
-    for (const line of diff.split('\n')) {
-      // cập nhật vị trí dòng từ hunk header
-      if (line.startsWith('@@')) {
-        const match = /\+(\d+)/.exec(line);
-        currentLine = Number(match[1]);
-        continue;
-      }
-
-      if (line.startsWith('-')) {
-        // dòng bị xóa, không tăng currentLine
-        continue;
-      }
-
-      if (line.startsWith('+')) {
-        changedLines.push(currentLine);  // ← chỉ push dòng có dấu +
-      }
-
-      currentLine++;  // tăng cho cả dòng + và context
+    if (changedLines.length === 0) {
+      continue;
     }
 
-    const source = fs.readFileSync(file, 'utf8');
-    const lines = source.split('\n');
+    // Lint cả file để ESLint có đủ context (import, type, scope...)
+    // Fix bug: lintText từng dòng riêng lẻ khiến nhiều rule bị sai hoặc bỏ sót
+    const results = await eslint.lintFiles([file]);
 
-    for (const lineNumber of changedLines) {
-      const line = lines[lineNumber - 1];
+    for (const result of results) {
+      for (const msg of result.messages) {
+        // Chỉ báo lỗi ở những dòng thực sự thay đổi
+        if (!changedLines.includes(msg.line)) {
+          continue;
+        }
 
-      if (!line || !line.trim()) {
-        continue;
-      }
+        const level = msg.severity === 2 ? 'error' : 'warning';
 
-      const results = await eslint.lintText(line, {
-        filePath: file,
-      });
+        console.error(
+          `[${level}] ${file}:${msg.line}:${msg.column} ${msg.message} (${msg.ruleId})`
+        );
 
-      for (const result of results) {
-        for (const msg of result.messages) {
-          const level =
-            msg.severity === 2 ? 'error' : 'warning';
-
-          console.error(
-            `[${level}] ${file}:${lineNumber}:${msg.column} ${msg.message} (${msg.ruleId})`
-          );
-
-          if (msg.severity === 2) {
-            hasError = true;
-          }
+        if (msg.severity === 2) {
+          hasError = true;
         }
       }
     }
@@ -85,6 +61,49 @@ async function main() {
   if (hasError) {
     process.exit(1);
   }
+}
+
+/**
+ * Parse các dòng thực sự được thêm/sửa trong diff
+ * bằng cách đọc từng dòng có dấu + thay vì dùng hunk header range
+ *
+ * Ví dụ diff:
+ * @@ -14,10 +14,15 @@        ← reset currentLine về 14
+ *  console.log('unchanged'); ← context line, tăng currentLine, không push
+ * -console.log('removed');   ← dòng xóa, không tăng currentLine
+ * +var result = a + b;       ← dòng thêm, push currentLine rồi tăng
+ */
+function parseChangedLines(diff: string): number[] {
+  const changedLines: number[] = [];
+  let currentLine = 0;
+
+  for (const line of diff.split('\n')) {
+    // Hunk header: reset vị trí dòng hiện tại
+    if (line.startsWith('@@')) {
+      const match = /\+(\d+)/.exec(line);
+      if (match) {
+        currentLine = Number(match[1]);
+      }
+      continue;
+    }
+
+    // Dòng bị xóa: không tồn tại trong file mới, không tăng currentLine
+    if (line.startsWith('-')) {
+      continue;
+    }
+
+    // Dòng được thêm: push vào changedLines rồi tăng currentLine
+    if (line.startsWith('+')) {
+      changedLines.push(currentLine);
+      currentLine++;
+      continue;
+    }
+
+    // Context line (không thay đổi): chỉ tăng currentLine, không push
+    currentLine++;
+  }
+
+  return changedLines;
 }
 
 main().catch(err => {
