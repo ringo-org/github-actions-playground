@@ -1,0 +1,9 @@
+
+
+
+        this.dummyFunction();
+    }
+
+    dummyFunction() {
+        console.log('this is a dummy function');
+}
