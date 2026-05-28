@@ -1,4 +1,5 @@
 const { ESLint } = require('eslint');
+const fs = require('fs');
 const { execSync } = require('child_process');
 
 async function main() {
@@ -8,7 +9,7 @@ async function main() {
   )
     .split('\n')
     .filter(Boolean)
-    .filter((f) => /^assets\/scripts\/.*\.ts$/.test(f));
+    .filter(f => /^assets\/scripts\/.*\.ts$/.test(f));
 
   if (changedFiles.length === 0) {
     console.log('No TS files changed');
@@ -16,6 +17,7 @@ async function main() {
   }
 
   const eslint = new ESLint();
+
   let hasError = false;
 
   for (const file of changedFiles) {
@@ -26,38 +28,80 @@ async function main() {
       { encoding: 'utf8' }
     );
 
-    console.log('=== RAW DIFF ===');
-    console.log(diff);
-    console.log('=== CHANGED LINES ===');
-    console.log(parseChangedLines(diff));
+    const changedLines = new Set();
 
-    // Parse chính xác từng dòng có dấu + thay vì dùng hunk header
-    // Fix bug: hunk header +14,15 bao gồm cả context lines không thay đổi
-    const changedLines = parseChangedLines(diff);
+    const diffLines = diff.split('\n');
 
-    if (changedLines.length === 0) {
-      continue;
+    let currentNewLine = 0;
+
+    for (const line of diffLines) {
+
+      const hunkMatch = line.match(
+        /^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/
+      );
+
+      if (hunkMatch) {
+        currentNewLine = Number(hunkMatch[1]);
+        continue;
+      }
+
+      // skip file headers
+      if (
+        line.startsWith('+++') ||
+        line.startsWith('---')
+      ) {
+        continue;
+      }
+
+      // added line
+      if (line.startsWith('+')) {
+        changedLines.add(currentNewLine);
+        currentNewLine++;
+        continue;
+      }
+
+      // removed line
+      if (line.startsWith('-')) {
+        continue;
+      }
+
+      // "\ No newline at end of file"
+      if (line.startsWith('\\')) {
+        continue;
+      }
+
+      // unchanged context line
+      currentNewLine++;
     }
 
-    // Lint cả file để ESLint có đủ context (import, type, scope...)
-    // Fix bug: lintText từng dòng riêng lẻ khiến nhiều rule bị sai hoặc bỏ sót
-    const results = await eslint.lintFiles([file]);
+    console.log([...changedLines]);
 
-    for (const result of results) {
-      for (const msg of result.messages) {
-        // Chỉ báo lỗi ở những dòng thực sự thay đổi
-        if (!changedLines.includes(msg.line)) {
-          continue;
-        }
+    const source = fs.readFileSync(file, 'utf8');
+    const lines = source.split('\n');
 
-        const level = msg.severity === 2 ? 'error' : 'warning';
+    for (const lineNumber of changedLines) {
+      const line = lines[lineNumber - 1];
 
-        console.error(
-          `[${level}] ${file}:${msg.line}:${msg.column} ${msg.message} (${msg.ruleId})`
-        );
+      if (!line || !line.trim()) {
+        continue;
+      }
 
-        if (msg.severity === 2) {
-          hasError = true;
+      const results = await eslint.lintText(line, {
+        filePath: file,
+      });
+
+      for (const result of results) {
+        for (const msg of result.messages) {
+          const level =
+            msg.severity === 2 ? 'error' : 'warning';
+
+          console.error(
+            `[${level}] ${file}:${lineNumber}:${msg.column} ${msg.message} (${msg.ruleId})`
+          );
+
+          if (msg.severity === 2) {
+            hasError = true;
+          }
         }
       }
     }
@@ -66,50 +110,6 @@ async function main() {
   if (hasError) {
     process.exit(1);
   }
-}
-
-/**
- * Parse các dòng thực sự được thêm/sửa trong diff
- * bằng cách đọc từng dòng có dấu + thay vì dùng hunk header range
- *
- * Ví dụ diff:
- * @@ -14,10 +14,15 @@        ← reset currentLine về 14
- *  console.log('unchanged'); ← context line, tăng currentLine, không push
- * -console.log('removed');   ← dòng xóa, không tăng currentLine
- * +var result = a + b;       ← dòng thêm, push currentLine rồi tăng
- */
-function parseChangedLines(diff) {
-  const changedLines = [];
-  let currentLine = 0;
-
-  for (const line of diff.split('\n')) {
-    if (line.startsWith('@@')) {
-      const match = /\+(\d+)/.exec(line);
-      if (match) {
-        currentLine = Number(match[1]);
-      }
-      continue;
-    }
-
-    // Bỏ qua file header --- và +++
-    if (line.startsWith('---') || line.startsWith('+++')) {
-      continue;
-    }
-
-    if (line.startsWith('-')) {
-      continue;
-    }
-
-    if (line.startsWith('+')) {
-      changedLines.push(currentLine);
-      currentLine++;
-      continue;
-    }
-
-    currentLine++;
-  }
-
-  return changedLines;
 }
 
 main().catch(err => {
