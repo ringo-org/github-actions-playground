@@ -11,4 +11,3 @@ export class HelloWorld extends Component {
     dummyFunction() {
     }
 }
-
