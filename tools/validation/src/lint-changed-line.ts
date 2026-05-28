@@ -30,57 +30,17 @@ async function main() {
 
     const changedLines = new Set();
 
-    const diffLines = diff.split('\n');
+    const regex =
+      /^@@ -\d+(?:,\d+)? \+(\d+)(?:,(\d+))? @@/gm;
 
-    let currentNewLine = 0;
+    let match;
 
-    for (const line of diffLines) {
+    while ((match = regex.exec(diff)) !== null) {
+      const start = Number(match[1]);
+      const count = Number(match[2] || 1);
 
-      const hunkMatch = line.match(
-        /^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/
-      );
-
-      if (hunkMatch) {
-        currentNewLine = Number(hunkMatch[1]);
-        continue;
-      }
-
-      // skip metadata
-      if (
-        line.startsWith('diff ') ||
-        line.startsWith('index ') ||
-        line.startsWith('---') ||
-        line.startsWith('+++')
-      ) {
-        continue;
-      }
-
-      // added line
-      if (
-        line.startsWith('+') &&
-        !line.startsWith('+++')
-      ) {
-        changedLines.add(currentNewLine);
-        currentNewLine++;
-        continue;
-      }
-
-      // removed line
-      if (
-        line.startsWith('-') &&
-        !line.startsWith('---')
-      ) {
-        continue;
-      }
-
-      // special marker
-      if (line.startsWith('\\')) {
-        continue;
-      }
-
-      // ONLY increment for real context line
-      if (line.startsWith(' ')) {
-        currentNewLine++;
+      for (let i = 0; i < count; i++) {
+        changedLines.add(start + i);
       }
     }
 
