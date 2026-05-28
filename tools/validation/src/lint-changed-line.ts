@@ -83,7 +83,6 @@ function parseChangedLines(diff) {
   let currentLine = 0;
 
   for (const line of diff.split('\n')) {
-    // Hunk header: reset vị trí dòng hiện tại
     if (line.startsWith('@@')) {
       const match = /\+(\d+)/.exec(line);
       if (match) {
@@ -92,19 +91,21 @@ function parseChangedLines(diff) {
       continue;
     }
 
-    // Dòng bị xóa: không tồn tại trong file mới, không tăng currentLine
+    // Bỏ qua file header --- và +++
+    if (line.startsWith('---') || line.startsWith('+++')) {
+      continue;
+    }
+
     if (line.startsWith('-')) {
       continue;
     }
 
-    // Dòng được thêm: push vào changedLines rồi tăng currentLine
     if (line.startsWith('+')) {
       changedLines.push(currentLine);
       currentLine++;
       continue;
     }
 
-    // Context line (không thay đổi): chỉ tăng currentLine, không push
     currentLine++;
   }
 
