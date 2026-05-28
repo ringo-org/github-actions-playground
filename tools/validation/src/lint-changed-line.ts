@@ -28,6 +28,10 @@ async function main() {
       { encoding: 'utf8' }
     );
 
+    console.log('===== RAW DIFF =====');
+    console.log(diff);
+    console.log('====================');
+
     const changedLines = new Set();
 
     const diffLines = diff.split('\n');
@@ -108,6 +112,9 @@ async function main() {
         }
       }
     }
+    console.log('===== CHANGED LINES =====');
+    console.log([...changedLines]);
+    console.log('=========================');
   }
 
   if (hasError) {
