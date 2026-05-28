@@ -28,24 +28,60 @@ async function main() {
       { encoding: 'utf8' }
     );
 
-    const changedLines = [];
+    console.log('===== RAW DIFF =====');
+    console.log(diff);
+    console.log('====================');
 
-    const regex = /^@@ .*?\+(\d+)(?:,(\d+))? @@/gm;
+    const changedLines = new Set();
 
-    let match;
+    const diffLines = diff.split('\n');
 
-    while ((match = regex.exec(diff)) !== null) {
-      const start = Number(match[1]);
-      const count = Number(match[2] || 1);
+    let currentLine = 0;
 
-      for (let i = 0; i < count; i++) {
-        changedLines.push(start + i);
+    for (const line of diffLines) {
+
+      // hunk header
+      const hunkMatch = line.match(
+        /^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/
+      );
+
+      if (hunkMatch) {
+        currentLine = Number(hunkMatch[1]);
+        continue;
       }
+
+      // exact added line only
+      if (
+        line.startsWith('+') &&
+        !line.startsWith('+++')
+      ) {
+        changedLines.add(currentLine);
+        currentLine++;
+        continue;
+      }
+
+      // removed line
+      if (
+        line.startsWith('-') &&
+        !line.startsWith('---')
+      ) {
+        continue;
+      }
+
+      // skip metadata
+      if (
+        line.startsWith('diff ') ||
+        line.startsWith('index ') ||
+        line.startsWith('\\')
+      ) {
+        continue;
+      }
+
+      // context line
+      currentLine++;
     }
 
-    if (changedLines.length === 0) {
-      continue;
-    }
+    console.log([...changedLines]);
 
     const source = fs.readFileSync(file, 'utf8');
     const lines = source.split('\n');
@@ -76,6 +112,9 @@ async function main() {
         }
       }
     }
+    console.log('===== CHANGED LINES =====');
+    console.log([...changedLines]);
+    console.log('=========================');
   }
 
   if (hasError) {
