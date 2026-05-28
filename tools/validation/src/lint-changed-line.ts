@@ -28,10 +28,6 @@ async function main() {
       { encoding: 'utf8' }
     );
 
-    console.log('===== RAW DIFF =====');
-    console.log(diff);
-    console.log('====================');
-
     const changedLines = new Set();
 
     const diffLines = diff.split('\n');
@@ -81,8 +77,6 @@ async function main() {
       currentLine++;
     }
 
-    console.log([...changedLines]);
-
     const source = fs.readFileSync(file, 'utf8');
     const lines = source.split('\n');
 
@@ -99,6 +93,9 @@ async function main() {
 
       for (const result of results) {
         for (const msg of result.messages) {
+          if (!msg.ruleId) {
+            continue;
+          }
           const level =
             msg.severity === 2 ? 'error' : 'warning';
 
@@ -112,9 +109,6 @@ async function main() {
         }
       }
     }
-    console.log('===== CHANGED LINES =====');
-    console.log([...changedLines]);
-    console.log('=========================');
   }
 
   if (hasError) {
