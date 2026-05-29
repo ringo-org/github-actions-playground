@@ -10,7 +10,12 @@
     "type-check": "tsc --noEmit",
     "lint-local": "eslint assets/scripts --ext .ts",
     "lint": "eslint",
-    "validate": "ts-node tools/validation/src/index.ts"
+    "validate": "ts-node tools/validation/src/index.ts",
+    "validate:pr-title": "ts-node validators/run-pr-title.ts",
+    "validate:branch-name": "ts-node validators/run-branch-name.ts",
+    "validate:texture": "ts-node validators/run-texture.ts",
+    "validate:meta": "ts-node validators/run-meta.ts",
+    "validate:vietnamese": "ts-node validators/run-vietnamese.ts"
   },
   "devDependencies": {
     "@types/node": "^22.19.19",
