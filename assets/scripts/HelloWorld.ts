@@ -5,10 +5,10 @@ const { ccclass } = _decorator;
 export class HelloWorld extends Component {
 
     start() {
-        
+        this.newFunction();
     }
 
     newFunction(){
-        
+        console.log("this is a log");
     }
 }
