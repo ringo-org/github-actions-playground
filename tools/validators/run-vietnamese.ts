@@ -6,15 +6,14 @@ import {
     Validator,
 } from '../core/types';
 import { runValidator } from '../core/runner';
+import { getChangedLines } from '../core/change-line';
 
 type LanguageProfile =
     Record<string, number>;
 
 type DetectionResult = {
     isVietnamese: boolean;
-
     confidence: number;
-
     scores: {
         vietnamese: number;
         english: number;
@@ -50,18 +49,11 @@ const EN_PROFILE:
 function normalizeText(
     text: string,
 ): string {
-
     return text
         .toLowerCase()
         .normalize('NFD')
-        .replace(
-            /[\u0300-\u036f]/g,
-            '',
-        )
-        .replace(
-            /[^\p{L}\s]/gu,
-            '',
-        )
+        .replace(/[\u0300-\u036f]/g, '')
+        .replace(/[^\p{L}\s]/gu, '')
         .replace(/\s+/g, ' ')
         .trim();
 }
@@ -69,55 +61,30 @@ function normalizeText(
 function extractTrigrams(
     text: string,
 ): string[] {
-
-    const trigrams:
-        string[] = [];
-
-    for (
-        let i = 0;
-        i < text.length - 2;
-        i++
-    ) {
-        trigrams.push(
-            text.slice(i, i + 3),
-        );
+    const trigrams: string[] = [];
+    for (let i = 0; i < text.length - 2; i++) {
+        trigrams.push(text.slice(i, i + 3));
     }
-
     return trigrams;
 }
 
 function buildProfile(
     text: string,
 ): LanguageProfile {
-
-    const normalized =
-        normalizeText(text);
-
-    const trigrams =
-        extractTrigrams(
-            normalized,
-        );
-
-    const counts:
-        Record<string, number> = {};
+    const normalized = normalizeText(text);
+    const trigrams = extractTrigrams(normalized);
+    const counts: Record<string, number> = {};
 
     for (const gram of trigrams) {
-
         counts[gram] ??= 0;
-
         counts[gram]++;
     }
 
-    const total =
-        trigrams.length;
-
-    const frequencies:
-        LanguageProfile = {};
+    const total = trigrams.length;
+    const frequencies: LanguageProfile = {};
 
     for (const gram in counts) {
-
-        frequencies[gram] =
-            counts[gram] / total;
+        frequencies[gram] = counts[gram] / total;
     }
 
     return frequencies;
@@ -127,163 +94,92 @@ function similarity(
     input: LanguageProfile,
     profile: LanguageProfile,
 ): number {
-
     let score = 0;
-
     for (const gram in input) {
-
         if (profile[gram]) {
-
-            score +=
-                input[gram] *
-                profile[gram];
+            score += input[gram] * profile[gram];
         }
     }
-
     return score;
 }
 
 function detectVietnamese(
     text: string,
 ): DetectionResult {
-
-    const inputProfile =
-        buildProfile(text);
-
-    const vietnameseScore =
-        similarity(
-            inputProfile,
-            VI_PROFILE,
-        );
-
-    const englishScore =
-        similarity(
-            inputProfile,
-            EN_PROFILE,
-        );
-
-    const total =
-        vietnameseScore +
-        englishScore;
-
-    const confidence =
-        total === 0
-            ? 0
-            : vietnameseScore /
-            total;
+    const inputProfile = buildProfile(text);
+    const vietnameseScore = similarity(inputProfile, VI_PROFILE);
+    const englishScore = similarity(inputProfile, EN_PROFILE);
+    const total = vietnameseScore + englishScore;
+    const confidence = total === 0 ? 0 : vietnameseScore / total;
 
     return {
-        isVietnamese:
-            vietnameseScore >
-            englishScore,
-
-        confidence: Number(
-            confidence.toFixed(3),
-        ),
-
+        isVietnamese: vietnameseScore > englishScore,
+        confidence: Number(confidence.toFixed(3)),
         scores: {
-            vietnamese: Number(
-                vietnameseScore.toFixed(
-                    6,
-                ),
-            ),
-
-            english: Number(
-                englishScore.toFixed(
-                    6,
-                ),
-            ),
+            vietnamese: Number(vietnameseScore.toFixed(6)),
+            english: Number(englishScore.toFixed(6)),
         },
     };
 }
 
-export const vietnameseValidator:
-    Validator = {
+export const vietnameseValidator: Validator = {
 
     name: 'vietnamese-validator',
 
     validate({
         changedFiles,
-    }: ValidationContext):
-        ValidationResult[] {
+    }: ValidationContext): ValidationResult[] {
 
-        const results:
-            ValidationResult[] = [];
+        const results: ValidationResult[] = [];
+
         for (const file of changedFiles) {
 
             // only validate assets
-            if (
-                !file.startsWith(
-                    'assets/',
-                )
-            ) {
-                continue;
-            }
+            if (!file.startsWith('assets/')) continue;
 
-            const ext =
-                file.substring(
-                    file.lastIndexOf(
-                        '.',
-                    ),
-                );
+            const ext = file.substring(file.lastIndexOf('.'));
 
             // ignore unsupported files
-            if (
-                !TEXT_EXTENSIONS
-                    .includes(ext)
-            ) {
-                continue;
-            }
+            if (!TEXT_EXTENSIONS.includes(ext)) continue;
 
             // ignore deleted files
-            if (
-                !fs.existsSync(file)
-            ) {
-                continue;
-            }
+            if (!fs.existsSync(file)) continue;
 
-            const content =
-                fs.readFileSync(
-                    file,
-                    'utf8',
-                );
-            // extract quoted strings
-            const matches =
-                content.match(
+            const changedLines = getChangedLines(file);
+
+            if (changedLines.size === 0) continue;
+
+            const content = fs.readFileSync(file, 'utf8');
+            const lines = content.split('\n');
+
+            for (const lineNumber of changedLines) {
+                const line = lines[lineNumber - 1];
+
+                if (!line || !line.trim()) continue;
+
+                const matches = line.match(
                     /(['"`])((?:\\.|(?!\1).)*)\1/g,
                 ) || [];
 
-            for (const raw of matches) {
+                for (const raw of matches) {
+                    const text = raw.slice(1, -1).trim();
 
-                const text =
-                    raw
-                        .slice(1, -1)
-                        .trim();
+                    if (text.length < MIN_TEXT_LENGTH) continue;
 
-                // ignore short text
-                if (
-                    text.length <
-                    MIN_TEXT_LENGTH
-                ) {
-                    continue;
-                }
+                    const result = detectVietnamese(text);
 
-                const result =
-                    detectVietnamese(
-                        text,
-                    );
-                if (
-                    result.isVietnamese && result.scores.vietnamese > 0.001
-                ) {
-                    results.push({
-                        type: 'error',
-
-                        message:
-                            `[VIETNAMESE_DETECTED] `
-                            + `${file}\n`
-                            + `${text}\n`
-                            + `confidence=${result.confidence}`,
-                    });
+                    if (
+                        result.isVietnamese &&
+                        result.scores.vietnamese > 0.001
+                    ) {
+                        results.push({
+                            type: 'error',
+                            message:
+                                `[VIETNAMESE_DETECTED] ${file}:${lineNumber}\n`
+                                + `${text}\n`
+                                + `confidence=${result.confidence}`,
+                        });
+                    }
                 }
             }
         }

@@ -1,119 +1,42 @@
-const { ESLint } = require('eslint');
-const fs = require('fs');
-const { execSync } = require('child_process');
+import { ESLint } from 'eslint';
+import { getChangedLines } from './core/change-line';
+
+const changedFiles = (process.env.CHANGED_FILES || '')
+  .split(' ')
+  .map(x => x.trim())
+  .filter(Boolean)
+  .filter(f => /^assets\/scripts\/.*\.ts$/.test(f));
 
 async function main() {
-  const changedFiles = execSync(
-    'git diff --name-only --diff-filter=ACMR origin/main...HEAD',
-    { encoding: 'utf8' }
-  )
-    .split('\n')
-    .filter(Boolean)
-    .filter(f => /^assets\/scripts\/.*\.ts$/.test(f));
-
   if (changedFiles.length === 0) {
     console.log('No TS files changed');
     return;
   }
 
   const eslint = new ESLint();
-
   let hasError = false;
 
   for (const file of changedFiles) {
-    console.log(`Checking ${file}`);
+    const changedLines = getChangedLines(file);
 
-    const diff = execSync(
-      `git diff -U0 origin/main...HEAD -- "${file}"`,
-      { encoding: 'utf8' }
-    );
+    if (changedLines.size === 0) continue;
 
-    const changedLines = new Set();
+    const results = await eslint.lintFiles([file]);
 
-    const diffLines = diff.split('\n');
+    for (const result of results) {
+      for (const msg of result.messages) {
+        if (!msg.ruleId) continue;
+        if (!changedLines.has(msg.line)) continue;
 
-    let currentLine = 0;
+        const level = msg.severity === 2 ? 'error' : 'warning';
+        console.error(`[${level}] ${file}:${msg.line}:${msg.column} ${msg.message} (${msg.ruleId})`);
 
-    for (const line of diffLines) {
-
-      // hunk header
-      const hunkMatch = line.match(
-        /^@@ -\d+(?:,\d+)? \+(\d+)(?:,\d+)? @@/
-      );
-
-      if (hunkMatch) {
-        currentLine = Number(hunkMatch[1]);
-        continue;
-      }
-
-      // exact added line only
-      if (
-        line.startsWith('+') &&
-        !line.startsWith('+++')
-      ) {
-        changedLines.add(currentLine);
-        currentLine++;
-        continue;
-      }
-
-      // removed line
-      if (
-        line.startsWith('-') &&
-        !line.startsWith('---')
-      ) {
-        continue;
-      }
-
-      // skip metadata
-      if (
-        line.startsWith('diff ') ||
-        line.startsWith('index ') ||
-        line.startsWith('\\')
-      ) {
-        continue;
-      }
-
-      // context line
-      currentLine++;
-    }
-
-    const source = fs.readFileSync(file, 'utf8');
-    const lines = source.split('\n');
-
-    for (const lineNumber of changedLines) {
-      const line = lines[lineNumber - 1];
-
-      if (!line || !line.trim()) {
-        continue;
-      }
-
-      const results = await eslint.lintText(line, {
-        filePath: file,
-      });
-
-      for (const result of results) {
-        for (const msg of result.messages) {
-          if (!msg.ruleId) {
-            continue;
-          }
-          const level =
-            msg.severity === 2 ? 'error' : 'warning';
-
-          console.error(
-            `[${level}] ${file}:${lineNumber}:${msg.column} ${msg.message} (${msg.ruleId})`
-          );
-
-          if (msg.severity === 2) {
-            hasError = true;
-          }
-        }
+        if (msg.severity === 2) hasError = true;
       }
     }
   }
 
-  if (hasError) {
-    process.exit(1);
-  }
+  if (hasError) process.exit(1);
 }
 
 main().catch(err => {

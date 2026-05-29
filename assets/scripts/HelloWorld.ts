@@ -9,6 +9,5 @@ export class HelloWorld extends Component {
     }
 
     newFunction(){
-        var a = "day la chuoi tieng viet, mot tram phan tram";
     }
 }
