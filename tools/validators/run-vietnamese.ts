@@ -209,7 +209,7 @@ export const vietnameseValidator:
 
         const results:
             ValidationResult[] = [];
-
+        console.log('change files ' + changedFiles.length);
         for (const file of changedFiles) {
 
             // only validate assets
