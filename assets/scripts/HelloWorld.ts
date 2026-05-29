@@ -9,6 +9,6 @@ export class HelloWorld extends Component {
     }
 
     newFunction(){
-        console.log("this is a log");
+        console.log("day la tieng viet qua ro rang");
     }
 }
