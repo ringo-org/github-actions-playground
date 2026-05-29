@@ -221,6 +221,7 @@ export const vietnameseValidator:
                 continue;
             }
 
+            console.log("validate file: " + file)
             const ext =
                 file.substring(
                     file.lastIndexOf(
@@ -248,7 +249,7 @@ export const vietnameseValidator:
                     file,
                     'utf8',
                 );
-
+            console.log("validate content: " + content)
             // extract quoted strings
             const matches =
                 content.match(
@@ -256,7 +257,6 @@ export const vietnameseValidator:
                 ) || [];
 
             for (const raw of matches) {
-                console.log("Scanning: " + raw);
 
                 const text =
                     raw
