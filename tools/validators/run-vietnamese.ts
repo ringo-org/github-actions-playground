@@ -209,7 +209,6 @@ export const vietnameseValidator:
 
         const results:
             ValidationResult[] = [];
-        console.log('change files ' + changedFiles.length);
         for (const file of changedFiles) {
 
             // only validate assets
@@ -221,7 +220,6 @@ export const vietnameseValidator:
                 continue;
             }
 
-            console.log("validate file: " + file)
             const ext =
                 file.substring(
                     file.lastIndexOf(
@@ -249,7 +247,6 @@ export const vietnameseValidator:
                     file,
                     'utf8',
                 );
-            console.log("validate content: " + content)
             // extract quoted strings
             const matches =
                 content.match(
