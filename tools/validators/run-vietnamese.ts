@@ -34,7 +34,7 @@ const MIN_TEXT_LENGTH = 5;
 const VI_PROFILE:
     LanguageProfile = JSON.parse(
         fs.readFileSync(
-            'tools/validation/src/config/vi-profile.json',
+            'tools/config/vi-profile.json',
             'utf8',
         ),
     );
@@ -42,7 +42,7 @@ const VI_PROFILE:
 const EN_PROFILE:
     LanguageProfile = JSON.parse(
         fs.readFileSync(
-            'tools/validation/src/config/en-profile.json',
+            'tools/config/en-profile.json',
             'utf8',
         ),
     );
