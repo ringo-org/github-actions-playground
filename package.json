@@ -11,11 +11,11 @@
     "lint-local": "eslint assets/scripts --ext .ts",
     "lint": "eslint",
     "validate": "ts-node tools/validation/src/index.ts",
-    "validate:pr-title": "ts-node --skip-project tools/validation/src/validators/run-pr-title.ts",
-    "validate:branch-name": "ts-node --skip-project tools/validation/src/validators/run-branch-name.ts",
-    "validate:texture": "ts-node --skip-project tools/validation/src/validators/run-texture.ts",
-    "validate:meta": "ts-node --skip-project tools/validation/src/validators/run-meta.ts",
-    "validate:vietnamese": "ts-node --skip-project tools/validation/src/validators/run-vietnamese.ts"
+    "validate:pr-title": "ts-node tools/validators/run-pr-title.ts",
+    "validate:branch-name": "ts-node tools/validators/run-branch-name.ts",
+    "validate:texture": "ts-node tools/validators/run-texture.ts",
+    "validate:meta": "ts-node tools/validators/run-meta.ts",
+    "validate:vietnamese": "ts-node tools/validators/run-vietnamese.ts"
   },
   "devDependencies": {
     "@types/node": "^22.19.19",
