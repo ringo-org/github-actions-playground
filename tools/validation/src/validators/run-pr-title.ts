@@ -1,3 +1,4 @@
+import { runValidator } from "../core/runner";
 import { Validator } from "../core/types";
 
 const PR_REGEX =
@@ -27,3 +28,5 @@ export const prTitleValidator: Validator = {
     return [];
   },
 };
+
+runValidator(prTitleValidator);

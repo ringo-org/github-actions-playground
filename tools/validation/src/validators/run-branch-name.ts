@@ -1,4 +1,5 @@
 import { Validator } from "../core/types";
+import { runValidator } from '../core/runner';
 
 const BRANCH_REGEX =
   /^(feature|fix|refactor|chore|hotfix|test|docs)\/[a-z0-9-_]+$/;
@@ -26,3 +27,5 @@ export const branchNameValidator: Validator = {
     return [];
   },
 };
+
+runValidator(branchNameValidator);

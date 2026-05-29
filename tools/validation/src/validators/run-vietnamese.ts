@@ -5,6 +5,7 @@ import {
     ValidationResult,
     Validator,
 } from '../core/types';
+import { runValidator } from '../core/runner';
 
 type LanguageProfile =
     Record<string, number>;
@@ -292,3 +293,5 @@ export const vietnameseValidator:
         return results;
     },
 };
+
+runValidator(vietnameseValidator);

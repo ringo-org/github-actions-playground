@@ -6,6 +6,7 @@ import {
     ValidationResult,
     Validator,
 } from '../core/types';
+import { runValidator } from '../core/runner';
 
 export const metaValidator: Validator = {
     name: 'meta-validator',
@@ -66,3 +67,5 @@ export const metaValidator: Validator = {
         return results;
     },
 };
+
+runValidator(metaValidator);
