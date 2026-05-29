@@ -256,6 +256,7 @@ export const vietnameseValidator:
                 ) || [];
 
             for (const raw of matches) {
+                console.log("Scanning: " + raw);
 
                 const text =
                     raw
@@ -269,7 +270,6 @@ export const vietnameseValidator:
                 ) {
                     continue;
                 }
-                console.log("Scanning: " + text);
 
                 const result =
                     detectVietnamese(
