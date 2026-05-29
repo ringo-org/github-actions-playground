@@ -1,0 +1,19 @@
+name: Validate Meta
+
+on:
+    pull_request:
+        branches:
+            - main
+            - develop
+
+jobs:
+    meta:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+            - run: npm ci
+            - run: npm run validate:meta
+              env:
+                  CHANGED_FILES: ${{ env.CHANGED_FILES }}

@@ -41,4 +41,4 @@ jobs:
           echo "========================="
 
       - name: Run ESLint on changed lines only
-        run: node tools/validation/src/lint-changed-line.ts
+        run: node tools/lint-changed-line.ts
