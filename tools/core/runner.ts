@@ -2,7 +2,7 @@ import { Validator } from './types';
 
 export function runValidator(validator: Validator) {
     const changedFiles = (process.env.CHANGED_FILES || '')
-        .split('\n')
+        .split(' ')
         .map((x) => x.trim())
         .filter(Boolean);
 
@@ -11,7 +11,9 @@ export function runValidator(validator: Validator) {
     let hasError = false;
 
     for (const result of results) {
-        console.error(`[${validator.name}] [${result.type.toUpperCase()}] ${result.message}`);
+        console.error(`[${validator.name}]`);
+        console.error(`[${result.type.toUpperCase()}]`);
+        console.error(result.message);
         if (result.type === 'error') hasError = true;
     }
 

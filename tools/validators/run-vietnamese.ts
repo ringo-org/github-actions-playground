@@ -209,7 +209,6 @@ export const vietnameseValidator:
 
         const results:
             ValidationResult[] = [];
-
         for (const file of changedFiles) {
 
             // only validate assets
@@ -248,7 +247,6 @@ export const vietnameseValidator:
                     file,
                     'utf8',
                 );
-
             // extract quoted strings
             const matches =
                 content.match(
