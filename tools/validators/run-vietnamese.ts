@@ -269,6 +269,7 @@ export const vietnameseValidator:
                 ) {
                     continue;
                 }
+                console.log("Scanning: " + text);
 
                 const result =
                     detectVietnamese(
