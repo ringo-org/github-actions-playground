@@ -14,7 +14,8 @@
     "validate:branch-name": "ts-node tools/validators/run-branch-name.ts",
     "validate:texture": "ts-node tools/validators/run-texture.ts",
     "validate:meta": "ts-node tools/validators/run-meta.ts",
-    "validate:vietnamese": "ts-node tools/validators/run-vietnamese.ts"
+    "validate:vietnamese": "ts-node tools/validators/run-vietnamese.ts",
+    "lint:changed": "ts-node tools/lint-changed-line.ts"
   },
   "devDependencies": {
     "@types/node": "^22.19.19",

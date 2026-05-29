@@ -1,4 +1,4 @@
-name: lint code
+name: Lint Code
 
 on:
   pull_request:
@@ -9,36 +9,18 @@ on:
 jobs:
   lint:
     runs-on: ubuntu-latest
-
     steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+      - uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Setup Node
-        uses: actions/setup-node@v4
-        with:
-          node-version: 20
-
-      - name: Install dependencies
-        run: npm install
-
-      - name: Fetch main branch
-        run: git fetch origin main
-
       - name: Get changed files
-        id: changed-files
         run: |
-          echo "files<<EOF" >> $GITHUB_OUTPUT
-          git diff --name-only --diff-filter=ACMR origin/main...HEAD >> $GITHUB_OUTPUT
-          echo "EOF" >> $GITHUB_OUTPUT
+          echo "CHANGED_FILES=$(git diff --name-only --diff-filter=ACMR origin/${{ github.base_ref }}...HEAD | tr '\n' ' ')" >> $GITHUB_ENV
 
-      - name: Debug changed files
-        run: |
-          echo "===== CHANGED FILES ====="
-          echo "${{ steps.changed-files.outputs.files }}"
-          echo "========================="
+      - run: npm ci
 
-      - name: Run ESLint on changed lines only
-        run: node tools/lint-changed-line.ts
+      - run: npm run lint:changed
+        env:
+          BASE_BRANCH: ${{ github.base_ref }}
+          CHANGED_FILES: ${{ env.CHANGED_FILES }}
