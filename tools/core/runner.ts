@@ -2,7 +2,7 @@ import { Validator } from './types';
 
 export function runValidator(validator: Validator) {
     const changedFiles = (process.env.CHANGED_FILES || '')
-        .split('\n')
+        .split(' ')
         .map((x) => x.trim())
         .filter(Boolean);
 
