@@ -1,25 +1,26 @@
 import { ESLint } from 'eslint';
 import { getChangedLines } from './core/change-line';
 
-const eslint = new ESLint();
-
 const changedFiles = (process.env.CHANGED_FILES || '')
   .split(' ')
   .map(x => x.trim())
   .filter(Boolean)
   .filter(f => /^assets\/scripts\/.*\.ts$/.test(f));
 
-if (changedFiles.length === 0) {
-  console.log('No TS files changed');
-  process.exit(0);
-}
+async function main() {
+  if (changedFiles.length === 0) {
+    console.log('No TS files changed');
+    return;
+  }
 
-let hasError = false;
+  const eslint = new ESLint();
+  let hasError = false;
 
-for (const file of changedFiles) {
-  const changedLines = getChangedLines(file);
+  for (const file of changedFiles) {
+    const changedLines = getChangedLines(file);
 
-  for (const lineNumber of changedLines) {
+    if (changedLines.size === 0) continue;
+
     const results = await eslint.lintFiles([file]);
 
     for (const result of results) {
@@ -33,9 +34,12 @@ for (const file of changedFiles) {
         if (msg.severity === 2) hasError = true;
       }
     }
-
-    break;
   }
+
+  if (hasError) process.exit(1);
 }
 
-if (hasError) process.exit(1);
+main().catch(err => {
+  console.error(err);
+  process.exit(1);
+});
