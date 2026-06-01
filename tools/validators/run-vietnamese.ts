@@ -93,22 +93,27 @@ function buildProfile(
 function similarity(
     input: LanguageProfile,
     profile: LanguageProfile,
+    otherProfile: LanguageProfile,
 ): number {
-    let score = 0;
+        let score = 0;
     for (const gram in input) {
         if (profile[gram]) {
             score += input[gram] * profile[gram];
         }
+        // phạt nếu gram này mạnh ở ngôn ngữ kia
+        if (!profile[gram] && otherProfile[gram]) {
+            score -= input[gram] * otherProfile[gram] * 0.5;
+        }
     }
-    return score;
+    return Math.max(0, score);
 }
 
 function detectVietnamese(
     text: string,
 ): DetectionResult {
     const inputProfile = buildProfile(text);
-    const vietnameseScore = similarity(inputProfile, VI_PROFILE);
-    const englishScore = similarity(inputProfile, EN_PROFILE);
+    const vietnameseScore = similarity(inputProfile, VI_PROFILE, EN_PROFILE);
+    const englishScore = similarity(inputProfile, EN_PROFILE, VI_PROFILE);
     const total = vietnameseScore + englishScore;
     const confidence = total === 0 ? 0 : vietnameseScore / total;
 
