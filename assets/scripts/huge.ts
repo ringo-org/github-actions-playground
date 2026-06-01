@@ -2,7 +2,7 @@ export const DATA = [
     {
         id: 0,
         name: 'item-0',
-        description: 'some random text 0',
+        description: 'Day la tieng viet, kha la chac keo',
         enabled: true,
     },
     {
