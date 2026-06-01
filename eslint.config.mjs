@@ -62,15 +62,6 @@ export default [
 
             // forbid console.log
             'no-console': 'error',
-
-            // unused variables
-            '@typescript-eslint/no-unused-vars': [
-                'error',
-                {
-                    argsIgnorePattern: '^_',
-                    varsIgnorePattern: '^_',
-                },
-            ],
         },
     },
 ];

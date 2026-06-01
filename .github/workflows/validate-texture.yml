@@ -1,0 +1,21 @@
+name: Validate Texture
+
+on:
+    pull_request:
+        branches:
+            - main
+            - develop
+jobs:
+    texture:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v4
+              with:
+                  fetch-depth: 0
+            - name: Get changed files
+              run: |
+                  echo "CHANGED_FILES=$(git diff --name-only --diff-filter=ACMR origin/${{ github.base_ref }}...HEAD | tr '\n' ' ')" >> $GITHUB_ENV
+            - run: npm ci
+            - run: npm run validate:texture
+              env:
+                  CHANGED_FILES: ${{ env.CHANGED_FILES }}

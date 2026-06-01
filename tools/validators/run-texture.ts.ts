@@ -14,6 +14,7 @@ import {
 import {
   SNAKE_CASE_REGEX,
 } from '../config/rule';
+import { runValidator } from '../core/runner';
 
 const ALLOWED_IMAGE_EXTENSIONS = [
   '.png',
@@ -152,3 +153,5 @@ export const textureValidator: Validator = {
     return results;
   },
 };
+
+runValidator(textureValidator);
