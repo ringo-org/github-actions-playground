@@ -9,5 +9,6 @@ export class HelloWorld extends Component {
     }
 
     newFunction(){
+        console.log("Hello World!");
     }
 }
