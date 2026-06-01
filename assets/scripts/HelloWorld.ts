@@ -10,5 +10,7 @@ export class HelloWorld extends Component {
 
     newFunction(){
         console.log("Hello World!");
+        var wrongnameformat = "This is a wrong name format";
+        wrongnameformat = "modify wrong name format";
     }
 }
