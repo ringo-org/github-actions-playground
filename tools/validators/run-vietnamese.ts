@@ -177,7 +177,8 @@ export const vietnameseValidator: Validator = {
                             message:
                                 `[VIETNAMESE_DETECTED] ${file}:${lineNumber}\n`
                                 + `${text}\n`
-                                + `confidence=${result.confidence}`,
+                                + `confidence=${result.confidence}`
+                                + ` (vietnamese=${result.scores.vietnamese}, english=${result.scores.english})`,
                         });
                     }
                 }
