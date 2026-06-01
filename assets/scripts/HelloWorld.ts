@@ -5,9 +5,12 @@ const { ccclass } = _decorator;
 export class HelloWorld extends Component {
 
     start() {
-        this.newFunction();
+        this.newFunctio();
     }
 
     newFunction(){
+        console.log("Hello World!");
+        var WRONGNAMEFORMAT = "This is a wrong name format";
+        WRONGNAMEFORMAT = "modify wrong name format";
     }
 }
