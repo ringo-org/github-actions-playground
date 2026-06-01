@@ -170,7 +170,7 @@ export const vietnameseValidator: Validator = {
 
                     if (
                         result.isVietnamese &&
-                        result.scores.vietnamese > 0.001
+                        result.scores.vietnamese > 0.002
                     ) {
                         results.push({
                             type: 'error',
