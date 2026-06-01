@@ -95,14 +95,13 @@ function similarity(
     profile: LanguageProfile,
     otherProfile: LanguageProfile,
 ): number {
-        let score = 0;
+    let score = 0;
     for (const gram in input) {
         if (profile[gram]) {
             score += input[gram] * profile[gram];
         }
-        // phạt nếu gram này mạnh ở ngôn ngữ kia
         if (!profile[gram] && otherProfile[gram]) {
-            score -= input[gram] * otherProfile[gram] * 0.5;
+            score -= input[gram] * otherProfile[gram];
         }
     }
     return Math.max(0, score);
@@ -150,14 +149,14 @@ export const vietnameseValidator: Validator = {
             // ignore deleted files
             if (!fs.existsSync(file)) continue;
 
-            const changedLines = getChangedLines(file);
+            // const changedLines = getChangedLines(file);
 
-            if (changedLines.size === 0) continue;
+            // if (changedLines.size === 0) continue;
 
             const content = fs.readFileSync(file, 'utf8');
             const lines = content.split('\n');
 
-            for (const lineNumber of changedLines) {
+            for (let lineNumber = 1; lineNumber <= lines.length; lineNumber++) {
                 const line = lines[lineNumber - 1];
 
                 if (!line || !line.trim()) continue;
