@@ -1,4 +1,4 @@
-name: lint
+name: checks
 
 on:
   workflow_dispatch:
@@ -14,13 +14,17 @@ permissions:
   pull-requests: write
 
 jobs:
-  lint:
+  validate-assets:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
         with:
           fetch-depth: 0
       - uses: ringo-org/github-actions-common/actions/change-file@main
-      - uses: ringo-org/github-actions-common/actions/lint@main
+      - uses: ringo-org/github-actions-common/actions/validate-assets@main
         with:
-          config-file: "eslint.config.ts"
+          max-image-size-mb: 5
+          max-image-dimension: 2048
+          require-meta: true
+          pattern: "assets/**/*"
+          require-power-of-two: true

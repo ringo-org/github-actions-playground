@@ -1,0 +1,107 @@
+export default [
+    {
+        ignores: [
+            'build/**',
+            'build-templates/**',
+            'temp/**',
+            'library/**',
+            'extensions/**',
+            'settings/**',
+            'packages/**',
+            'node_modules/**',
+            'buildCmd/**',
+            'local/**',
+            '*.d.ts',
+            '*.meta',
+            '**/cc-common/**',
+            '**/plugins/**',
+            '**/mock/**',
+            '**/resources/**',
+            '**/game-network.js',
+        ],
+    },
+    {
+        languageOptions: { ecmaVersion: 2022, sourceType: 'module' },
+        rules: {
+            '@typescript-eslint/no-explicit-any': 'off',
+            '@typescript-eslint/explicit-module-boundary-types': 'off',
+            '@typescript-eslint/prefer-const': 'off',
+            '@typescript-eslint/explicit-function-return-type': 'off',
+            '@typescript-eslint/no-unused-expressions': 'off',
+            '@typescript-eslint/no-unsafe-function-type': 'off',
+            '@typescript-eslint/no-empty-object-type': 'off',
+            '@typescript-eslint/no-wrapper-object-types': 'warn',
+            '@typescript-eslint/no-duplicate-enum-values': 'warn',
+            '@typescript-eslint/no-this-alias': 'off',
+            '@typescript-eslint/no-unused-vars': [
+                'warn',
+                {
+                    args: 'all',
+                    argsIgnorePattern: '^_',
+                    caughtErrors: 'all',
+                    caughtErrorsIgnorePattern: '^_',
+                    destructuredArrayIgnorePattern: '^_',
+                    varsIgnorePattern: '^_',
+                    ignoreRestSiblings: true,
+                },
+            ],
+            quotes: 'off',
+            'prefer-const': 'off',
+            'no-unused-expressions': 'off',
+            'no-extra-semi': 'warn',
+            'no-var': 'off',
+            'no-empty': 'warn',
+            'no-case-declarations': 'off',
+            'no-cond-assign': 'warn',
+            'no-prototype-builtins': 'off',
+            'no-unused-labels': 'off',
+            'no-mixed-spaces-and-tabs': 'off',
+            'no-fallthrough': 'off',
+            curly: ['error', 'all'],
+            'nonblock-statement-body-position': ['error', 'beside'],
+            'brace-style': [
+                'error',
+                '1tbs',
+                {
+                    allowSingleLine: false,
+                },
+            ],
+            '@typescript-eslint/naming-convention': [
+                'error',
+                {
+                    selector: 'function',
+                    format: ['camelCase'],
+                },
+
+                {
+                    selector: 'method',
+                    format: ['camelCase'],
+                },
+
+                {
+                    selector: 'variable',
+                    modifiers: ['destructured'],
+                    format: null,
+                },
+                {
+                    selector: 'variable',
+                    format: ['camelCase'],
+                    leadingUnderscore: 'allow',
+                },
+                {
+                    selector: 'variable',
+                    modifiers: ['const'],
+                    format: [
+                        'UPPER_CASE',
+                    ],
+                    leadingUnderscore: 'allow',
+                },
+                {
+                    selector: 'typeLike',
+                    format: ['PascalCase'],
+                },
+            ],
+            'no-console': 'error',
+        },
+    },
+];
