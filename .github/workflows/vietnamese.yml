@@ -1,0 +1,29 @@
+name: checks
+
+on:
+  workflow_dispatch:
+  pull_request:
+  push:
+    branches:
+      - main
+      - develop
+
+permissions:
+  contents: read
+  issues: write
+  pull-requests: write
+
+jobs:
+  detect-vietnamese:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          fetch-depth: 0
+      - uses: ringo-org/github-actions-common/actions/change-file@main
+      - uses: ringo-org/github-actions-common/actions/detect-vietnamese@main
+        with:
+          exclude: ""
+          scan-scene: false
+          scan-prefab: false
+          pattern: "**/*.{ts,js,json,txt,md}"
